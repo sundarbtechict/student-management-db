@@ -63,7 +63,7 @@ public class StudentManagement {
 			while(rs.next())
 			{
 					System.out.println("-----------------------------");
-					System.out.print("Register no");
+					System.out.print("Register no:");
 					System.out.println(rs.getString("regno"));
 					System.out.print("Name:");
 					System.out.println(rs.getString("name"));
@@ -91,19 +91,20 @@ public class StudentManagement {
 			rs=st.executeQuery(sql);
 			if(rs.next())
 			{
-			String a="%-15s%-15s%-20s%-12s%-20s%-12s";
-			System.out.println("-------------------------------------------------------------------------------------");
-			System.out.format(a,"Register No","Name","Date of birth","Depatment","Email","Mobile");			
-			System.out.println();
-			System.out.println("-------------------------------------------------------------------------------------");
-
-			while(rs.next())
-			{
-				System.out.format(a,rs.getString("regno"),rs.getString("name"),rs.getString("dob"),rs.getString("dept"),rs.getString("email"),rs.getString("mobile"));
+				rs.previous();
+				String a="%-15s%-15s%-20s%-12s%-20s%-12s";
+				System.out.println("-------------------------------------------------------------------------------------");
+				System.out.format(a,"Register No","Name","Date of birth","Depatment","Email","Mobile");			
 				System.out.println();
+				System.out.println("-------------------------------------------------------------------------------------");
 
-			}
-			System.out.println("-------------------------------------------------------------------------------------");
+				while(rs.next())
+				{
+					System.out.format(a,rs.getString("regno"),rs.getString("name"),rs.getString("dob"),rs.getString("dept"),rs.getString("email"),rs.getString("mobile"));
+					System.out.println();
+
+				}
+				System.out.println("-------------------------------------------------------------------------------------");
 			}
 			else
 				System.out.println("empty records");
