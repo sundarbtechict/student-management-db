@@ -9,29 +9,29 @@ import java.util.Scanner;
 
 public class StudentManagement {
 	Connection c;
-	Statement st ;
+	Statement st;
 	ResultSet rs;
 
 	Scanner s =new Scanner(System.in);
 	String url,user,pass;
 
-	public StudentManagement() {
-		try{
+	public StudentManagement()
+	{
 			url = "jdbc:mysql://localhost:3306/student";
 			user = "root";
 			pass = "";
-			c= DriverManager.getConnection(url, user, pass);
-			st=c.createStatement();
-		}catch (Exception e){System.out.println(e);}
 	}
 
 	void create()
 	{
 		try{
+			c= DriverManager.getConnection(url, user, pass);
+			st=c.createStatement();
 			System.out.println("enter your details");
 			Student ss=new Student();
 			System.out.println("Name:");
-			ss.setName(s.next());
+			ss.setName(s.nextLine());
+			System.out.println(ss.getName());
 			System.out.println("Register no:");
 			ss.setRegNo(s.nextInt());
 			System.out.println("Date of Birth:");
@@ -48,12 +48,16 @@ public class StudentManagement {
 				System.out.println("record is not inserted");
 			else
 				System.out.println("record is sucessfully inserted");
+			st.close();
+			c.close();
 
 		}catch (Exception e){System.out.println(e);}
 	};
 	void read()
 	{
 		try{
+			c= DriverManager.getConnection(url, user, pass);
+			st=c.createStatement();
 			System.out.println("Enter your register no to display:");
 			int r=s.nextInt();
 			boolean f= false;
@@ -82,11 +86,15 @@ public class StudentManagement {
 			{
 				System.out.println("Invalid register no");
 			}
+			st.close();
+			c.close();
 		}catch (Exception e){System.out.println(e);}
 	}
 	void readAll()
 	{
 		try{
+			c= DriverManager.getConnection(url, user, pass);
+			st=c.createStatement();
 			String sql="SELECT * FROM STUDENT_MANAGEMENT";
 			rs=st.executeQuery(sql);
 			if(rs.next())
@@ -108,11 +116,15 @@ public class StudentManagement {
 			}
 			else
 				System.out.println("empty records");
+			st.close();
+			c.close();
 		}catch (Exception e){System.out.println(e);}
 	}
 	void update()
 	{
 		try{
+			c= DriverManager.getConnection(url, user, pass);
+			st=c.createStatement();
 			System.out.println("Enter your register no to update:");
 			int r=s.nextInt();
 			String sql="SELECT regno FROM STUDENT_MANAGEMENT WHERE regno="+r;
@@ -142,11 +154,15 @@ public class StudentManagement {
 			{
 				System.out.println("Invalid register no");
 			}
+			st.close();
+			c.close();
 		}catch (Exception e){System.out.println(e);}
 	}
 	void  delete()
 	{
 		try{
+			c= DriverManager.getConnection(url, user, pass);
+			st=c.createStatement();
 			System.out.println("Enter your register no to delete:");
 			int r=s.nextInt();
 			boolean f= false;
@@ -161,14 +177,20 @@ public class StudentManagement {
 			{
 				System.out.println("Invalid register no");
 			}
+			st.close();
+			c.close();
 		}catch (Exception e){System.out.println(e);}
 	}
 	void deleteAll()
 	{
 		try{
+			c= DriverManager.getConnection(url, user, pass);
+			st=c.createStatement();
 			String sql="DELETE FROM STUDENT_MANAGEMENT";
 			st.executeUpdate(sql);
 			System.out.println("Deleted all records");
+			st.close();
+			c.close();
 		}catch (Exception e){System.out.println(e);}
 	}
 
