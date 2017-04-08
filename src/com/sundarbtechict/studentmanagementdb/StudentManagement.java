@@ -2,36 +2,31 @@ package com.sundarbtechict.studentmanagementdb;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 //import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
 public class StudentManagement {
+	
 	Connection c;
 	Statement st;
 	ResultSet rs;
+	PreparedStatement ps;
 
 	Scanner s =new Scanner(System.in);
-	String url,user,pass;
 
-	public StudentManagement()
-	{
-			url = "jdbc:mysql://localhost:3306/student";
-			user = "root";
-			pass = "";
-	}
 
 	void create()
 	{
 		try{
-			c= DriverManager.getConnection(url, user, pass);
-			st=c.createStatement();
+			c=DbUtil.getConnection();
+			ps=c.prepareStatement("INSERT INTO STUDENT_MANAGEMENT VALUES(?,?,?,?,?,?)");
 			System.out.println("enter your details");
 			Student ss=new Student();
 			System.out.println("Name:");
 			ss.setName(s.nextLine());
-			System.out.println(ss.getName());
 			System.out.println("Register no:");
 			ss.setRegNo(s.nextInt());
 			System.out.println("Date of Birth:");
@@ -42,13 +37,18 @@ public class StudentManagement {
 			ss.setEmail(s.next());
 			System.out.println("Mobile:");
 			ss.setMobile(s.next());
-			String sql="INSERT INTO STUDENT_MANAGEMENT VALUES('"+ss.getRegNo()+"','"+ss.getName()+"','"+ss.getDob()+"','"+ss.getDept()+"','"+ss.getEmail()+"','"+ss.getMobile()+"')";
-			int n=st.executeUpdate(sql);
+			ps.setInt(1, ss.getRegNo());
+			ps.setString(2, ss.getName());
+			ps.setString(3, ss.getDob());
+			ps.setString(4, ss.getDept());
+			ps.setString(5, ss.getEmail());
+			ps.setString(6, ss.getMobile());
+			int n=ps.executeUpdate();
 			if(n==0)
 				System.out.println("record is not inserted");
 			else
 				System.out.println("record is sucessfully inserted");
-			st.close();
+			ps.close();
 			c.close();
 
 		}catch (Exception e){System.out.println(e);}
@@ -56,7 +56,7 @@ public class StudentManagement {
 	void read()
 	{
 		try{
-			c= DriverManager.getConnection(url, user, pass);
+			c= DbUtil.getConnection();
 			st=c.createStatement();
 			System.out.println("Enter your register no to display:");
 			int r=s.nextInt();
@@ -93,7 +93,7 @@ public class StudentManagement {
 	void readAll()
 	{
 		try{
-			c= DriverManager.getConnection(url, user, pass);
+			c=DbUtil.getConnection();
 			st=c.createStatement();
 			String sql="SELECT * FROM STUDENT_MANAGEMENT";
 			rs=st.executeQuery(sql);
@@ -123,7 +123,7 @@ public class StudentManagement {
 	void update()
 	{
 		try{
-			c= DriverManager.getConnection(url, user, pass);
+			c=DbUtil.getConnection();
 			st=c.createStatement();
 			System.out.println("Enter your register no to update:");
 			int r=s.nextInt();
@@ -161,7 +161,7 @@ public class StudentManagement {
 	void  delete()
 	{
 		try{
-			c= DriverManager.getConnection(url, user, pass);
+			c=DbUtil.getConnection();
 			st=c.createStatement();
 			System.out.println("Enter your register no to delete:");
 			int r=s.nextInt();
@@ -184,7 +184,7 @@ public class StudentManagement {
 	void deleteAll()
 	{
 		try{
-			c= DriverManager.getConnection(url, user, pass);
+			c=DbUtil.getConnection();
 			st=c.createStatement();
 			String sql="DELETE FROM STUDENT_MANAGEMENT";
 			st.executeUpdate(sql);
