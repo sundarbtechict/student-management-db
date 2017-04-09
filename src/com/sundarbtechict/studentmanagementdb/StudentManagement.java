@@ -1,7 +1,6 @@
 package com.sundarbtechict.studentmanagementdb;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 //import java.sql.SQLException;
@@ -9,24 +8,16 @@ import java.sql.Statement;
 import java.util.Scanner;
 
 public class StudentManagement {
-	
-	Connection c;
-	Statement st;
-	ResultSet rs;
-	PreparedStatement ps;
-
 	Scanner s =new Scanner(System.in);
-
-
 	void create()
 	{
 		try{
-			c=DbUtil.getConnection();
-			ps=c.prepareStatement("INSERT INTO STUDENT_MANAGEMENT VALUES(?,?,?,?,?,?)");
+			Connection c=DbUtil.getConnection();
+			PreparedStatement ps=c.prepareStatement("INSERT INTO STUDENT_MANAGEMENT VALUES(?,?,?,?,?,?)");
 			System.out.println("enter your details");
-			Student ss=new Student();
+			Student ss=new Student(); 
 			System.out.println("Name:");
-			ss.setName(s.nextLine());
+			ss.setName(s.next());
 			System.out.println("Register no:");
 			ss.setRegNo(s.nextInt());
 			System.out.println("Date of Birth:");
@@ -56,14 +47,15 @@ public class StudentManagement {
 	void read()
 	{
 		try{
-			c= DbUtil.getConnection();
-			st=c.createStatement();
+			Connection c= DbUtil.getConnection();
 			System.out.println("Enter your register no to display:");
 			int r=s.nextInt();
 			boolean f= false;
-			String sql="SELECT * FROM STUDENT_MANAGEMENT WHERE regno='"+r+"'";
+			String sql="SELECT * FROM STUDENT_MANAGEMENT WHERE regno=?";
 			System.out.println(sql);
-			rs=st.executeQuery(sql);
+			PreparedStatement ps=c.prepareStatement(sql);
+			ps.setInt(1,r);
+			ResultSet rs=ps.executeQuery();
 			while(rs.next())
 			{
 					System.out.println("-----------------------------");
@@ -86,17 +78,18 @@ public class StudentManagement {
 			{
 				System.out.println("Invalid register no");
 			}
-			st.close();
+			rs.close();
+			ps.close();
 			c.close();
 		}catch (Exception e){System.out.println(e);}
 	}
 	void readAll()
 	{
 		try{
-			c=DbUtil.getConnection();
-			st=c.createStatement();
+			Connection c=DbUtil.getConnection();
+			PreparedStatement ps=c.prepareStatement("");
 			String sql="SELECT * FROM STUDENT_MANAGEMENT";
-			rs=st.executeQuery(sql);
+			ResultSet rs=ps.executeQuery(sql);
 			if(rs.next())
 			{
 				rs.previous();
@@ -116,21 +109,25 @@ public class StudentManagement {
 			}
 			else
 				System.out.println("empty records");
-			st.close();
+			rs.close();
+			ps.close();
 			c.close();
 		}catch (Exception e){System.out.println(e);}
 	}
 	void update()
 	{
 		try{
-			c=DbUtil.getConnection();
-			st=c.createStatement();
+			Connection c=DbUtil.getConnection();
 			System.out.println("Enter your register no to update:");
 			int r=s.nextInt();
-			String sql="SELECT regno FROM STUDENT_MANAGEMENT WHERE regno="+r;
-			rs=st.executeQuery(sql);
+			String sql="SELECT regno FROM STUDENT_MANAGEMENT WHERE regno=?";
+			PreparedStatement ps=c.prepareStatement(sql);
+			ps.setInt(1,r);
+			ResultSet rs=ps.executeQuery();
 			if(rs.next())
 			{
+				sql="UPDATE STUDENT_MANAGEMENT SET regno= ?,name= ?,dob= ?,dept= ?,email= ?,mobile= ? WHERE regno= ?";
+				ps=c.prepareStatement(sql);
 				Student ss=new Student();
 				System.out.println("Name:");
 				ss.setName(s.next());
@@ -144,30 +141,36 @@ public class StudentManagement {
 				ss.setEmail(s.next());
 				System.out.println("Mobile:");
 				ss.setMobile(s.next());
-				sql="UPDATE STUDENT_MANAGEMENT SET "
-						+ "regno='"+ss.getRegNo()+"',name='"+ss.getName()+"',dob='"+ss.getDob()+"',dept='"+ss.getDept()+"',email='"+ss.getEmail()+"',mobile='"+ss.getMobile()+"'"
-								+ " WHERE regno="+r;
-				st.execute(sql);
+				ps.setInt(1, ss.getRegNo());
+				ps.setString(2, ss.getName());
+				ps.setString(3, ss.getDob());
+				ps.setString(4, ss.getDept());
+				ps.setString(5, ss.getEmail());
+				ps.setString(6, ss.getMobile());
+				ps.setInt(7, r);
+				ps.executeUpdate();
 				System.out.println("your record is sucessfully updated");
 			}
 			else
 			{
 				System.out.println("Invalid register no");
 			}
-			st.close();
+			rs.close();
+			ps.close();
 			c.close();
 		}catch (Exception e){System.out.println(e);}
 	}
 	void  delete()
 	{
 		try{
-			c=DbUtil.getConnection();
-			st=c.createStatement();
+			Connection c=DbUtil.getConnection();
 			System.out.println("Enter your register no to delete:");
 			int r=s.nextInt();
 			boolean f= false;
-			String sql="DELETE FROM STUDENT_MANAGEMENT WHERE regno='"+r+"'";
-			int n=st.executeUpdate(sql);
+			String sql="DELETE FROM STUDENT_MANAGEMENT WHERE regno=?";
+			PreparedStatement ps=c.prepareStatement(sql);
+			ps.setInt(1,r);
+			int n = ps.executeUpdate();
 			if(n!=0)
 			{
 				f=true;
@@ -177,19 +180,19 @@ public class StudentManagement {
 			{
 				System.out.println("Invalid register no");
 			}
-			st.close();
+			ps.close();
 			c.close();
 		}catch (Exception e){System.out.println(e);}
 	}
 	void deleteAll()
 	{
 		try{
-			c=DbUtil.getConnection();
-			st=c.createStatement();
+			Connection c=DbUtil.getConnection();
+			PreparedStatement ps=c.prepareStatement("");
 			String sql="DELETE FROM STUDENT_MANAGEMENT";
-			st.executeUpdate(sql);
+			ps.executeUpdate(sql);
 			System.out.println("Deleted all records");
-			st.close();
+			ps.close();
 			c.close();
 		}catch (Exception e){System.out.println(e);}
 	}
